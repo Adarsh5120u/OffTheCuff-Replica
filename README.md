@@ -12,12 +12,6 @@ Prompt decks (Table Topics, Debate, Storytelling, Professional, Wildcard) with c
 
 Open `index.html` in Chrome or Edge. Allow microphone access when asked.
 
-## Deploy (GitHub Pages)
-
-1. Create a new repository on GitHub and push this folder to it.
-2. In the repo: Settings → Pages → under "Build and deployment", set Source to "Deploy from a branch", pick `main` and `/ (root)`, and save.
-3. After a minute your app is live at `https://<your-username>.github.io/<repo-name>/`.
-
 Open that URL in Safari on iPhone and use Share → Add to Home Screen for a full-screen app. HTTPS is required for microphone access, which GitHub Pages provides automatically.
 
 ## Browser notes
