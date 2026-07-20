@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Off the Cuff">
+<meta name="theme-color" content="#17130f">
+<title>Off the Cuff — Impromptu Speaking Trainer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=Archivo:wght@400;500;600&family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  color-scheme: light;
+  --ink: #fff7e8;        /* bright warm stage-light background */
+  --panel: #ffffff;
+  --panel-2: #ffe8c2;
+  --line: #eeddc2;
+  --paper: #2b1d3a;      /* deep plum text */
+  --dim: #7c6f5f;
+  --faint: #a99a85;
+  --green: #0c9e5e;
+  --amber: #ff8a00;      /* vivid energizing orange */
+  --red: #e5484d;
+  --display: "Big Shoulders Display", sans-serif;
+  --body: "Archivo", sans-serif;
+  --mono: "Spline Sans Mono", monospace;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { background: var(--ink); }
+body {
+  font-family: var(--body);
+  color: var(--paper);
+  background:
+    radial-gradient(1000px 500px at 50% -10%, rgba(255,138,0,0.14), transparent 60%),
+    var(--ink);
+  min-height: 100vh;
+  line-height: 1.5;
+}
+.wrap { max-width: 760px; margin: 0 auto; padding: 0 20px 80px; }
+
+/* ---------- header ---------- */
+header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 22px 0 18px; border-bottom: 1px solid var(--line);
+  margin-bottom: 34px;
+}
+.wordmark {
+  font-family: var(--display); font-weight: 800; font-size: 26px;
+  letter-spacing: 0.06em; text-transform: uppercase;
+}
+.wordmark em { font-style: normal; color: var(--amber); }
+.header-right { display: flex; align-items: center; gap: 14px; }
+.onair {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em;
+  padding: 6px 12px; border: 1px solid var(--line); border-radius: 4px;
+  color: var(--faint); transition: all .3s;
+}
+.onair.live {
+  color: #fff; background: var(--red); border-color: var(--red);
+  box-shadow: 0 0 18px rgba(229,72,77,0.55);
+  animation: onairPulse 1.6s ease-in-out infinite;
+}
+@keyframes onairPulse { 50% { box-shadow: 0 0 6px rgba(229,72,77,0.3); } }
+.streak-chip {
+  font-family: var(--mono); font-size: 12px; color: var(--dim);
+}
+.streak-chip b { color: var(--amber); font-weight: 600; }
+
+/* ---------- shared ---------- */
+.phase { display: none; }
+.phase.active { display: block; animation: fadeUp .35s ease; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } }
+.eyebrow {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--dim); margin-bottom: 10px;
+}
+button {
+  font-family: var(--body); cursor: pointer; border: none;
+  border-radius: 6px; transition: transform .12s, background .2s, opacity .2s;
+}
+button:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+button:active { transform: scale(0.98); }
+.btn-primary {
+  background: var(--amber); color: #fff;
+  font-weight: 600; font-size: 16px; padding: 14px 30px;
+  box-shadow: 0 4px 14px rgba(255,138,0,0.35);
+}
+.btn-primary:hover { background: #ff9d2e; }
+.btn-primary.armed {
+  animation: armedPulse 1.2s ease-in-out infinite;
+}
+@keyframes armedPulse { 50% { box-shadow: 0 0 22px rgba(242,179,61,0.6); } }
+.btn-ghost {
+  background: transparent; color: var(--dim); font-size: 14px;
+  padding: 10px 18px; border: 1px solid var(--line);
+}
+.btn-ghost:hover { color: var(--paper); border-color: var(--dim); }
+.btn-danger {
+  background: var(--red); color: #fff; font-weight: 600;
+  font-size: 16px; padding: 14px 30px;
+}
+.btn-danger:hover { background: #f05b60; }
+
+/* ---------- setup phase ---------- */
+.hero-title {
+  font-family: var(--display); font-weight: 800;
+  font-size: clamp(42px, 9vw, 74px); line-height: 0.95;
+  text-transform: uppercase; letter-spacing: 0.01em; margin-bottom: 14px;
+}
+.hero-title span { color: var(--amber); }
+.hero-sub { color: var(--dim); font-size: 16px; max-width: 52ch; margin-bottom: 34px; }
+.setup-grid { display: grid; gap: 22px; margin-bottom: 34px; }
+.setup-block .eyebrow { margin-bottom: 8px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  background: var(--panel); color: var(--dim); font-size: 14px;
+  padding: 9px 16px; border: 1px solid var(--line); border-radius: 20px;
+}
+.chip:hover { color: var(--paper); }
+.chip.sel { background: var(--paper); color: #fff; border-color: var(--paper); font-weight: 600; }
+.support-note {
+  margin-top: 26px; font-size: 13px; color: var(--faint);
+  border-left: 2px solid var(--line); padding-left: 12px;
+}
+
+/* ---------- prompt / prep ---------- */
+.prompt-card {
+  background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+  padding: 34px 30px; margin-bottom: 26px;
+}
+.prompt-text {
+  font-family: var(--display); font-weight: 700;
+  font-size: clamp(26px, 5vw, 40px); line-height: 1.1; margin-top: 6px;
+}
+.prep-row { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+.prep-count {
+  font-family: var(--mono); font-size: 54px; font-weight: 600;
+  color: var(--amber); min-width: 110px;
+}
+.prep-hint { color: var(--dim); font-size: 14px; flex: 1; min-width: 200px; }
+.row-gap { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 22px; }
+
+/* ---------- speaking phase ---------- */
+.stage-center { text-align: center; }
+.ring-wrap { position: relative; width: 280px; height: 280px; margin: 10px auto 8px; }
+.ring-wrap svg { transform: rotate(-90deg); }
+.ring-track { fill: none; stroke: var(--line); stroke-width: 10; }
+.ring-progress {
+  fill: none; stroke: var(--green); stroke-width: 10; stroke-linecap: round;
+  transition: stroke .4s;
+}
+.ring-wrap.overtime .ring-progress { animation: blinkRed .8s step-end infinite; }
+@keyframes blinkRed { 50% { opacity: 0.25; } }
+.ring-inner {
+  position: absolute; inset: 0; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 4px;
+}
+.big-time { font-family: var(--mono); font-size: 52px; font-weight: 600; }
+.time-label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.2em; color: var(--dim); text-transform: uppercase; }
+.vu {
+  display: flex; gap: 4px; align-items: flex-end; justify-content: center;
+  height: 34px; margin: 18px 0 6px;
+}
+.vu i {
+  width: 8px; border-radius: 2px; background: var(--line);
+  height: 20%; transition: height .08s linear;
+}
+.vu i.on { background: var(--green); }
+.vu i.on.hot { background: var(--amber); }
+.live-transcript {
+  min-height: 54px; max-height: 96px; overflow: hidden;
+  color: var(--dim); font-size: 15px; margin: 16px auto 24px;
+  max-width: 56ch; display: flex; align-items: flex-end; justify-content: center;
+}
+.live-transcript span { display: block; }
+
+/* ---------- results ---------- */
+.score-row { display: flex; align-items: baseline; gap: 18px; flex-wrap: wrap; margin-bottom: 6px; }
+.score-num {
+  font-family: var(--display); font-weight: 800; font-size: 92px; line-height: 1;
+}
+.score-grade { font-family: var(--mono); font-size: 14px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--amber); }
+.score-sub { color: var(--dim); font-size: 15px; margin-bottom: 28px; max-width: 56ch; }
+.metrics {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px; margin-bottom: 26px;
+}
+.metric {
+  background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+  padding: 16px; box-shadow: 0 2px 8px rgba(43,29,58,0.05);
+}
+.metric .val { font-family: var(--mono); font-size: 26px; font-weight: 600; }
+.metric .lbl { font-size: 12px; color: var(--dim); margin-top: 2px; }
+.metric .note { font-size: 11px; color: var(--faint); margin-top: 6px; }
+.metric.good .val { color: var(--green); }
+.metric.warn .val { color: var(--amber); }
+.metric.bad .val { color: var(--red); }
+.result-section { margin-bottom: 26px; }
+.result-section h3 {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--dim); margin-bottom: 10px; font-weight: 500;
+}
+.filler-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.filler-tag {
+  font-family: var(--mono); font-size: 13px; background: var(--panel);
+  border: 1px solid var(--line); border-radius: 4px; padding: 5px 10px; color: var(--paper);
+}
+.filler-tag b { color: var(--red); font-weight: 600; }
+.timeline-card {
+  background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+  padding: 16px; box-shadow: 0 2px 8px rgba(43,29,58,0.05);
+}
+.timeline-legend {
+  display: flex; gap: 18px; flex-wrap: wrap; margin-top: 10px;
+  font-size: 12px; color: var(--dim);
+}
+.timeline-legend .leg {
+  display: inline-block; width: 14px; height: 4px; border-radius: 2px;
+  vertical-align: middle; margin-right: 5px;
+}
+.leg-pace { background: var(--amber); }
+.leg-energy { background: #7c5cff; }
+.leg-pause { background: var(--red); height: 10px !important; width: 3px !important; }
+.improve-grid { display: grid; gap: 10px; }
+.improve-card {
+  background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--amber);
+  border-radius: 8px; padding: 14px 16px; box-shadow: 0 2px 8px rgba(43,29,58,0.05);
+}
+.improve-card.p1 { border-left-color: var(--red); }
+.improve-card.p3 { border-left-color: var(--green); }
+.improve-card .ic-head {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 10px;
+}
+.improve-card .ic-title { font-weight: 600; font-size: 15px; }
+.improve-card .ic-pri {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.15em;
+  text-transform: uppercase; color: var(--faint); white-space: nowrap;
+}
+.improve-card .ic-why { font-size: 14px; color: var(--dim); margin-top: 4px; }
+.improve-card .ic-tip { font-size: 14px; margin-top: 8px; }
+.improve-card .ic-tip b { color: var(--amber); }
+.improve-card.p1 .ic-tip b { color: var(--red); }
+.improve-card.p3 .ic-tip b { color: var(--green); }
+.ai-card {
+  background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+  padding: 16px; box-shadow: 0 2px 8px rgba(43,29,58,0.05);
+}
+.ai-hint { font-size: 13px; color: var(--dim); margin-bottom: 12px; }
+.ai-row { display: flex; gap: 10px; flex-wrap: wrap; }
+.ai-row input {
+  flex: 1; min-width: 220px; font-family: var(--mono); font-size: 13px;
+  padding: 10px 12px; border: 1px solid var(--line); border-radius: 6px;
+  background: var(--ink); color: var(--paper);
+}
+.ai-row input:focus { outline: 2px solid var(--amber); border-color: var(--amber); }
+#aiOutput { font-size: 15px; line-height: 1.7; white-space: pre-wrap; }
+#aiOutput .ai-redo { margin-top: 12px; }
+.transcript-box {
+  background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+  padding: 20px; font-size: 15px; line-height: 1.8; color: var(--paper);
+  max-height: 260px; overflow-y: auto;
+}
+.transcript-box mark {
+  background: rgba(229,72,77,0.15); color: #c22a30; border-radius: 3px; padding: 0 3px;
+}
+.coach-list { list-style: none; }
+.coach-list li {
+  padding: 10px 0 10px 26px; position: relative; color: var(--paper);
+  font-size: 15px; border-bottom: 1px solid var(--line);
+}
+.coach-list li:last-child { border-bottom: none; }
+.coach-list li::before {
+  content: "→"; position: absolute; left: 0; color: var(--amber);
+  font-family: var(--mono);
+}
+audio { width: 100%; margin-top: 4px; }
+
+/* ---------- history ---------- */
+.history { margin-top: 60px; border-top: 1px solid var(--line); padding-top: 30px; }
+.history-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 18px; }
+.history-head h2 {
+  font-family: var(--display); font-weight: 700; font-size: 24px;
+  text-transform: uppercase; letter-spacing: 0.05em;
+}
+.history-stats { font-family: var(--mono); font-size: 12px; color: var(--dim); }
+.chart { display: flex; align-items: flex-end; gap: 6px; height: 70px; margin-bottom: 18px; }
+.chart i {
+  flex: 1; max-width: 40px; background: var(--panel-2); border-radius: 3px 3px 0 0;
+  min-height: 4px; position: relative;
+}
+.chart i.latest { background: var(--amber); }
+.history-list { display: grid; gap: 8px; }
+.history-item {
+  display: flex; align-items: center; gap: 14px;
+  background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
+  padding: 12px 16px; font-size: 14px;
+}
+.hi-score { font-family: var(--mono); font-weight: 600; font-size: 18px; min-width: 40px; }
+.hi-prompt { flex: 1; color: var(--paper); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hi-meta { font-family: var(--mono); font-size: 11px; color: var(--faint); white-space: nowrap; }
+.empty-note { color: var(--faint); font-size: 14px; }
+
+@media (max-width: 520px) {
+  .ring-wrap { width: 230px; height: 230px; }
+  .ring-wrap svg { width: 230px; height: 230px; }
+  .big-time { font-size: 42px; }
+  .score-num { font-size: 68px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="wordmark">Off the <em>Cuff</em></div>
+    <div class="header-right">
+      <span class="streak-chip" id="streakChip"></span>
+      <span class="onair" id="onair">ON AIR</span>
+    </div>
+  </header>
+
+  <!-- SETUP -->
+  <section class="phase active" id="phase-setup">
+    <h1 class="hero-title">Think fast.<br><span>Speak well.</span></h1>
+    <p class="hero-sub">Draw a surprise prompt, get a few seconds to think, then speak. Your mic listens, transcribes, and scores your delivery — filler words, pace, pauses and all.</p>
+
+    <div class="setup-grid">
+      <div class="setup-block">
+        <div class="eyebrow">Prompt deck</div>
+        <div class="chips" id="categoryChips"></div>
+      </div>
+      <div class="setup-block">
+        <div class="eyebrow">Prep time</div>
+        <div class="chips" id="prepChips"></div>
+      </div>
+      <div class="setup-block">
+        <div class="eyebrow">Speaking time</div>
+        <div class="chips" id="speakChips"></div>
+      </div>
+      <div class="setup-block">
+        <div class="eyebrow">Accent / recognition language</div>
+        <div class="chips" id="langChips"></div>
+        <p class="support-note" style="margin-top:10px;">Picking the variant closest to your accent dramatically improves transcript accuracy. Use a quiet room and speak 15–30 cm from the mic.</p>
+      </div>
+    </div>
+
+    <button class="btn-primary" id="btnDraw">Draw a prompt</button>
+    <p class="support-note" id="supportNote"></p>
+  </section>
+
+  <!-- PREP -->
+  <section class="phase" id="phase-prep">
+    <div class="prompt-card">
+      <div class="eyebrow">Your prompt</div>
+      <div class="prompt-text" id="prepPrompt"></div>
+    </div>
+    <div class="prep-row">
+      <div class="prep-count" id="prepCount">0:30</div>
+      <div class="prep-hint">Sketch an opening line, one or two points, and a closer. Speaking starts automatically — or jump in early.</div>
+    </div>
+    <div class="row-gap">
+      <button class="btn-primary" id="btnStartNow">Start speaking now</button>
+      <button class="btn-ghost" id="btnReroll">Different prompt</button>
+      <button class="btn-ghost" id="btnCancelPrep">Cancel</button>
+    </div>
+  </section>
+
+  <!-- SPEAKING -->
+  <section class="phase" id="phase-speak">
+    <div class="prompt-card" style="padding:20px 24px; margin-bottom:18px;">
+      <div class="eyebrow">Speaking on</div>
+      <div class="prompt-text" style="font-size:clamp(18px,3.5vw,24px);" id="speakPrompt"></div>
+    </div>
+    <div class="stage-center">
+      <div class="ring-wrap" id="ringWrap">
+        <svg width="280" height="280" viewBox="0 0 280 280">
+          <circle class="ring-track" cx="140" cy="140" r="128"></circle>
+          <circle class="ring-progress" id="ringProgress" cx="140" cy="140" r="128"></circle>
+        </svg>
+        <div class="ring-inner">
+          <div class="big-time" id="speakTime">0:00</div>
+          <div class="time-label" id="speakTimeLabel">elapsed</div>
+        </div>
+      </div>
+      <div class="vu" id="vu"></div>
+      <div class="live-transcript"><span id="liveTranscript">Listening…</span></div>
+      <button class="btn-danger" id="btnEnd">End speech</button>
+    </div>
+  </section>
+
+  <!-- RESULTS -->
+  <section class="phase" id="phase-results">
+    <div class="eyebrow">Session report</div>
+    <div class="score-row">
+      <div class="score-num" id="scoreNum">—</div>
+      <div class="score-grade" id="scoreGrade"></div>
+    </div>
+    <p class="score-sub" id="scoreSub"></p>
+
+    <div class="metrics" id="metricsGrid"></div>
+
+    <div class="result-section" id="timelineSection">
+      <h3>How the speech went</h3>
+      <div class="timeline-card">
+        <svg id="timelineChart" viewBox="0 0 600 180" width="100%" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Speech timeline"></svg>
+        <div class="timeline-legend">
+          <span><i class="leg leg-pace"></i> pace (wpm)</span>
+          <span><i class="leg leg-energy"></i> voice energy</span>
+          <span><i class="leg leg-pause"></i> long pause</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="result-section" id="improveSection">
+      <h3>Areas for improvement</h3>
+      <div class="improve-grid" id="improveGrid"></div>
+    </div>
+
+    <div class="result-section" id="fillerSection">
+      <h3>Fillers caught</h3>
+      <div class="filler-tags" id="fillerTags"></div>
+    </div>
+
+    <div class="result-section">
+      <h3>Coach's notes</h3>
+      <ul class="coach-list" id="coachList"></ul>
+    </div>
+
+    <div class="result-section" id="aiSection">
+      <h3>AI coach</h3>
+      <div class="ai-card">
+        <div id="aiSetup">
+          <p class="ai-hint">Get deeper coaching on structure, argument and word choice from Claude. Paste an Anthropic API key — it's stored only in this browser and calls go straight from your device to Anthropic.</p>
+          <div class="ai-row">
+            <input type="password" id="aiKey" placeholder="sk-ant-..." autocomplete="off">
+            <button class="btn-primary" id="btnAiCoach" style="padding:10px 20px; font-size:14px;">Get AI coaching</button>
+          </div>
+        </div>
+        <div id="aiOutput" style="display:none;"></div>
+      </div>
+    </div>
+
+    <div class="result-section" id="transcriptSection">
+      <h3>Transcript</h3>
+      <div class="transcript-box" id="transcriptBox"></div>
+    </div>
+
+    <div class="result-section" id="playbackSection">
+      <h3>Playback</h3>
+      <audio controls id="playback"></audio>
+    </div>
+
+    <div class="row-gap">
+      <button class="btn-primary" id="btnAgain">New prompt</button>
+      <button class="btn-ghost" id="btnHome">Back to setup</button>
+    </div>
+  </section>
+
+  <!-- HISTORY -->
+  <section class="history" id="historySection">
+    <div class="history-head">
+      <h2>Practice log</h2>
+      <span class="history-stats" id="historyStats"></span>
+    </div>
+    <div class="chart" id="chart"></div>
+    <div class="history-list" id="historyList"></div>
+  </section>
+
+</div>
+<script>
+/* ===================== data ===================== */
+const PROMPTS = {
+  "Table Topics": [
+    "If you could uninvent one piece of technology, what would it be and why?",
+    "Describe the perfect Sunday.",
+    "What's a lesson you learned the hard way?",
+    "If walls could talk, what would your kitchen say about you?",
+    "You've just been made mayor for a day. What's your first move?",
+    "What would you do with an extra hour every day?",
+    "Convince us that breakfast is — or isn't — the most important meal.",
+    "What's something everyone should try at least once?",
+    "If you had to teach a class tomorrow, what would it be on?",
+    "What does 'home' mean to you?",
+    "Which season matches your personality, and why?",
+    "What's the best advice you've ever ignored?"
+  ],
+  "Debate": [
+    "Should schools stop giving homework? Take a side.",
+    "Is remote work making us better or worse at collaboration?",
+    "Argue for or against: social media has made us more connected.",
+    "Cats or dogs — defend your choice like a lawyer.",
+    "Should voting be mandatory?",
+    "Is it better to be a specialist or a generalist?",
+    "Argue that failure teaches more than success.",
+    "Should tipping be abolished?",
+    "Is space exploration worth the cost?",
+    "Defend a food opinion most people would disagree with.",
+    "Should AI-generated art count as art?",
+    "Is ambition overrated?"
+  ],
+  "Storytelling": [
+    "Tell us about a time a plan fell apart — and what happened next.",
+    "Describe a stranger who changed your day.",
+    "Tell the story of a scar, literal or otherwise.",
+    "Recall your most memorable meal.",
+    "Tell us about the best gift you've ever given.",
+    "Describe a moment you surprised yourself.",
+    "Tell the story behind a photo you'd never delete.",
+    "Describe your first day at something new.",
+    "Tell us about a rule you broke and don't regret.",
+    "Describe a place you'll never forget.",
+    "Tell the story of a friendship that started badly.",
+    "Recall a time you got completely lost."
+  ],
+  "Professional": [
+    "Walk us through a decision you'd make differently today.",
+    "Pitch your favorite product like you invented it.",
+    "Tell me about a time you disagreed with your team.",
+    "Explain your job — or dream job — to a ten-year-old.",
+    "What's a skill you're building right now, and how?",
+    "Describe a time you received tough feedback.",
+    "Pitch yourself for a role in one minute.",
+    "What trend in your field is overrated?",
+    "How do you handle a deadline you know you'll miss?",
+    "Describe the best team you've ever been part of.",
+    "What would your colleagues say is your superpower?",
+    "Explain a complex idea you know well, simply."
+  ],
+  "Wildcard": [
+    "You're a tour guide for your own life. Give the tour.",
+    "Sell us the worst product you can imagine.",
+    "Give an acceptance speech for an award you didn't expect.",
+    "Explain how to make a sandwich — dramatically.",
+    "You wake up as the last person on Earth. Narrate the morning.",
+    "Deliver breaking news about something completely ordinary.",
+    "Persuade us that Mondays deserve more love.",
+    "Give a toast at a robot's wedding.",
+    "Describe color to someone who's never seen it.",
+    "Announce your retirement from a hobby you never had.",
+    "Give a weather forecast for your week ahead.",
+    "Convince a time traveler from 1900 that today is great."
+  ]
+};
+
+const FILLER_PHRASES = ["you know", "i mean", "kind of", "sort of"];
+const FILLER_WORDS = ["um", "uh", "uhm", "er", "ah", "hmm", "like", "actually", "basically", "literally", "right", "okay", "so", "well"];
+
+const PREP_OPTIONS = [15, 30, 60];
+const SPEAK_OPTIONS = [60, 120, 180, 300];
+const LANG_OPTIONS = [
+  ["en-IN", "English (India)"],
+  ["en-US", "English (US)"],
+  ["en-GB", "English (UK)"],
+  ["en-AU", "English (AU)"]
+];
+
+/* ===================== state ===================== */
+const state = {
+  category: "Table Topics",
+  prepSec: 30,
+  speakSec: 120,
+  lang: (function(){ try { return localStorage.getItem("offthecuff.lang") || "en-IN"; } catch(e){ return "en-IN"; } })(),
+  prompt: "",
+  phase: "setup",
+  prepTimer: null,
+  speakTimer: null,
+  speakStart: 0,
+  elapsed: 0,
+  finalTranscript: "",
+  interimTranscript: "",
+  confSum: 0,
+  confCount: 0,
+  recognition: null,
+  recognizing: false,
+  mediaRecorder: null,
+  audioChunks: [],
+  audioURL: null,
+  audioCtx: null,
+  analyser: null,
+  micStream: null,
+  rafId: null,
+  silenceMs: 0,
+  pauseCount: 0,
+  inPause: false,
+  lastFrame: 0,
+  wakeLock: null,
+  samples: [],
+  pauseTimes: [],
+  levelSum: 0,
+  levelN: 0,
+  lastSampleT: 0
+};
+
+const $ = id => document.getElementById(id);
+const hasRecognition = !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+const hasMedia = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+const IS_IOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
+  || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+
+/* ===================== setup UI ===================== */
+function buildChips(containerId, items, selected, format, onPick) {
+  const el = $(containerId);
+  el.innerHTML = "";
+  items.forEach(item => {
+    const b = document.createElement("button");
+    b.className = "chip" + (item === selected ? " sel" : "");
+    b.textContent = format(item);
+    b.onclick = () => { onPick(item); };
+    el.appendChild(b);
+  });
+}
+function fmtDur(sec) {
+  if (sec < 60) return sec + "s";
+  const m = sec / 60;
+  return (m % 1 === 0 ? m : m.toFixed(1)) + " min";
+}
+function renderSetup() {
+  buildChips("categoryChips", Object.keys(PROMPTS), state.category, c => c,
+    c => { state.category = c; renderSetup(); });
+  buildChips("prepChips", PREP_OPTIONS, state.prepSec, fmtDur,
+    v => { state.prepSec = v; renderSetup(); });
+  buildChips("speakChips", SPEAK_OPTIONS, state.speakSec, fmtDur,
+    v => { state.speakSec = v; renderSetup(); });
+  buildChips("langChips", LANG_OPTIONS.map(l => l[0]), state.lang,
+    code => LANG_OPTIONS.find(l => l[0] === code)[1],
+    code => {
+      state.lang = code;
+      try { localStorage.setItem("offthecuff.lang", code); } catch (e) {}
+      renderSetup();
+    });
+}
+
+function showPhase(name) {
+  state.phase = name;
+  document.querySelectorAll(".phase").forEach(p => p.classList.remove("active"));
+  $("phase-" + name).classList.add("active");
+  $("historySection").style.display = (name === "setup" || name === "results") ? "" : "none";
+}
+
+/* ===================== prompt & prep ===================== */
+function drawPrompt() {
+  const deck = PROMPTS[state.category];
+  let next = deck[Math.floor(Math.random() * deck.length)];
+  if (deck.length > 1) {
+    while (next === state.prompt) next = deck[Math.floor(Math.random() * deck.length)];
+  }
+  state.prompt = next;
+}
+function startPrep() {
+  drawPrompt();
+  $("prepPrompt").textContent = state.prompt;
+  $("btnStartNow").textContent = "Start speaking now";
+  $("btnStartNow").classList.remove("armed");
+  document.querySelector(".prep-hint").textContent = "Sketch an opening line, one or two points, and a closer." + (IS_IOS ? " When time's up, tap the button to start." : " Speaking starts automatically — or jump in early.");
+  showPhase("prep");
+  let remain = state.prepSec;
+  renderPrepCount(remain);
+  clearInterval(state.prepTimer);
+  state.prepTimer = setInterval(() => {
+    remain--;
+    renderPrepCount(remain);
+    if (remain <= 0) {
+      clearInterval(state.prepTimer);
+      if (IS_IOS) {
+        // iOS requires a user tap to open the mic — arm the button instead of auto-starting
+        $("prepCount").textContent = "GO";
+        $("btnStartNow").textContent = "Tap to start speaking";
+        $("btnStartNow").classList.add("armed");
+        document.querySelector(".prep-hint").textContent = "Time's up — tap the button to open the mic and start.";
+      } else {
+        startSpeaking();
+      }
+    }
+  }, 1000);
+}
+function renderPrepCount(sec) {
+  $("prepCount").textContent = fmtClock(Math.max(0, sec));
+  $("prepCount").style.color = sec <= 5 ? "var(--red)" : "var(--amber)";
+}
+function fmtClock(sec) {
+  const m = Math.floor(sec / 60), s = Math.floor(sec % 60);
+  return m + ":" + String(s).padStart(2, "0");
+}
+
+/* ===================== speaking ===================== */
+const RING_CIRC = 2 * Math.PI * 128;
+
+async function startSpeaking() {
+  clearInterval(state.prepTimer);
+  state.finalTranscript = "";
+  state.interimTranscript = "";
+  state.confSum = 0;
+  state.confCount = 0;
+  state.audioChunks = [];
+  state.pauseCount = 0;
+  state.silenceMs = 0;
+  state.inPause = false;
+  state.samples = [];
+  state.pauseTimes = [];
+  state.levelSum = 0;
+  state.levelN = 0;
+  state.lastSampleT = 0;
+  if (state.audioURL) { URL.revokeObjectURL(state.audioURL); state.audioURL = null; }
+
+  $("speakPrompt").textContent = state.prompt;
+  $("liveTranscript").textContent = "Listening…";
+  $("ringWrap").classList.remove("overtime");
+  const ring = $("ringProgress");
+  ring.style.strokeDasharray = RING_CIRC;
+  ring.style.strokeDashoffset = RING_CIRC;
+  ring.style.stroke = "var(--green)";
+  showPhase("speak");
+  $("onair").classList.add("live");
+
+  // One shared mic stream for recording, VU meter and analysis.
+  // On iOS, Safari records in audio/mp4 — prefer it there so playback works.
+  if (hasMedia) {
+    try {
+      state.micStream = await navigator.mediaDevices.getUserMedia({
+        audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true, channelCount: 1 }
+      });
+      let mime = "";
+      if (window.MediaRecorder) {
+        const candidates = IS_IOS
+          ? ["audio/mp4", "audio/mp4;codecs=mp4a.40.2", "audio/webm;codecs=opus", "audio/webm", ""]
+          : ["audio/webm;codecs=opus", "audio/webm", "audio/mp4", ""];
+        for (const m of candidates) {
+          if (!m || MediaRecorder.isTypeSupported(m)) { mime = m; break; }
+        }
+        try {
+          state.mediaRecorder = mime ? new MediaRecorder(state.micStream, { mimeType: mime }) : new MediaRecorder(state.micStream);
+          state.mediaRecorder.ondataavailable = e => { if (e.data.size) state.audioChunks.push(e.data); };
+          state.mediaRecorder.start(1000);
+        } catch (e) { state.mediaRecorder = null; }
+      }
+      state.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (state.audioCtx.state === "suspended") { try { await state.audioCtx.resume(); } catch (e) {} }
+      const src = state.audioCtx.createMediaStreamSource(state.micStream);
+      state.analyser = state.audioCtx.createAnalyser();
+      state.analyser.fftSize = 512;
+      src.connect(state.analyser);
+    } catch (err) {
+      state.micStream = null;
+      $("liveTranscript").textContent = "Mic unavailable — timing only.";
+    }
+  }
+  startRecognition();
+
+  state.speakStart = performance.now();
+  state.lastFrame = state.speakStart;
+  state.elapsed = 0;
+  clearInterval(state.speakTimer);
+  state.speakTimer = setInterval(tickSpeak, 200);
+  meterLoop();
+  // Keep the screen awake while speaking — iOS cuts the mic when the screen sleeps
+  if (navigator.wakeLock && navigator.wakeLock.request) {
+    navigator.wakeLock.request("screen").then(wl => { state.wakeLock = wl; }).catch(() => {});
+  }
+}
+
+function tickSpeak() {
+  state.elapsed = (performance.now() - state.speakStart) / 1000;
+  const t = state.elapsed, target = state.speakSec;
+  const remain = target - t;
+  const ring = $("ringProgress");
+  const frac = Math.min(1, t / target);
+  ring.style.strokeDashoffset = RING_CIRC * (1 - frac);
+  if (remain <= 0) {
+    $("speakTime").textContent = "+" + fmtClock(-remain);
+    $("speakTimeLabel").textContent = "overtime";
+    ring.style.stroke = "var(--red)";
+    $("ringWrap").classList.add("overtime");
+    if (-remain >= 30) endSpeech();
+  } else {
+    $("speakTime").textContent = fmtClock(remain);
+    $("speakTimeLabel").textContent = "remaining";
+    ring.style.stroke = frac < 0.75 ? "var(--green)" : "var(--amber)";
+  }
+}
+
+/* VU meter + silence-based pause detection */
+const VU_BARS = 16;
+(function buildVU() {
+  const vu = $("vu");
+  for (let i = 0; i < VU_BARS; i++) vu.appendChild(document.createElement("i"));
+})();
+
+function meterLoop() {
+  if (state.phase !== "speak") return;
+  state.rafId = requestAnimationFrame(meterLoop);
+  if (!state.analyser) return;
+  const data = new Uint8Array(state.analyser.frequencyBinCount);
+  state.analyser.getByteFrequencyData(data);
+  let sum = 0;
+  for (let i = 0; i < data.length; i++) sum += data[i];
+  const level = sum / data.length / 255; // 0..1
+
+  const now = performance.now();
+  const dt = now - state.lastFrame;
+  state.lastFrame = now;
+  if (state.elapsed > 1.5) {
+    if (level < 0.02) {
+      state.silenceMs += dt;
+      if (state.silenceMs > 1500 && !state.inPause) {
+        state.pauseCount++; state.inPause = true;
+        state.pauseTimes.push(state.elapsed);
+      }
+    } else {
+      state.silenceMs = 0; state.inPause = false;
+    }
+  }
+
+  // Sample the timeline every 5 seconds: word count so far + average energy
+  state.levelSum += level; state.levelN++;
+  if (state.elapsed - state.lastSampleT >= 5) {
+    const wordsSoFar = (state.finalTranscript + " " + state.interimTranscript).trim().split(/\s+/).filter(Boolean).length;
+    state.samples.push({
+      t: state.elapsed,
+      words: wordsSoFar,
+      energy: state.levelN ? state.levelSum / state.levelN : 0
+    });
+    state.levelSum = 0; state.levelN = 0;
+    state.lastSampleT = state.elapsed;
+  }
+
+  const bars = $("vu").children;
+  const lit = Math.round(level * 2.4 * VU_BARS);
+  for (let i = 0; i < VU_BARS; i++) {
+    const on = i < lit;
+    bars[i].className = on ? (i >= VU_BARS - 4 ? "on hot" : "on") : "";
+    bars[i].style.height = on ? (25 + (i / VU_BARS) * 75) + "%" : "20%";
+  }
+}
+
+/* speech recognition */
+function startRecognition() {
+  if (!hasRecognition) return;
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const rec = new SR();
+  rec.continuous = true;
+  rec.interimResults = true;
+  rec.maxAlternatives = 3;
+  rec.lang = state.lang;
+  // Each recognizer segment (between restarts) rebuilds its own final text from
+  // scratch on every event, so a re-fired result can never be double-counted.
+  let segmentFinal = "";
+  rec.onresult = e => {
+    let finals = "", interim = "";
+    for (let i = 0; i < e.results.length; i++) {
+      const r = e.results[i];
+      // pick the highest-confidence alternative
+      let best = r[0];
+      for (let a = 1; a < r.length; a++) {
+        if (r[a].confidence > best.confidence) best = r[a];
+      }
+      if (r.isFinal) {
+        finals += best.transcript.trim() + " ";
+        if (typeof best.confidence === "number" && best.confidence > 0) {
+          state.confSum += best.confidence; state.confCount++;
+        }
+      } else {
+        interim += best.transcript;
+      }
+    }
+    segmentFinal = finals;
+    state.interimTranscript = interim;
+    const shown = (state.finalTranscript + segmentFinal + interim).trim();
+    const el = $("liveTranscript");
+    el.textContent = shown ? "…" + shown.slice(-140) : "Listening…";
+  };
+  const commitSegment = () => {
+    if (segmentFinal) { state.finalTranscript += segmentFinal; segmentFinal = ""; }
+  };
+  rec.onend = () => {
+    state.recognizing = false;
+    commitSegment();
+    if (state.phase === "speak") { try { rec.start(); state.recognizing = true; } catch (e) {} }
+  };
+  rec.onerror = ev => {
+    // "no-speech" and "aborted" are routine; onend fires after and handles restart
+    if (ev.error === "not-allowed" || ev.error === "service-not-allowed") {
+      $("liveTranscript").textContent = "Speech recognition blocked — check mic permissions.";
+    }
+  };
+  rec.commitSegment = commitSegment;
+  try { rec.start(); state.recognizing = true; } catch (e) {}
+  state.recognition = rec;
+}
+
+function stopEverything() {
+  clearInterval(state.speakTimer);
+  cancelAnimationFrame(state.rafId);
+  $("onair").classList.remove("live");
+  if (state.wakeLock) { try { state.wakeLock.release(); } catch (e) {} state.wakeLock = null; }
+  if (state.recognition) {
+    state.recognition.onend = null;
+    if (state.recognition.commitSegment) state.recognition.commitSegment();
+    try { state.recognition.stop(); } catch (e) {}
+  }
+  if (state.mediaRecorder && state.mediaRecorder.state !== "inactive") {
+    return new Promise(resolve => {
+      state.mediaRecorder.onstop = () => {
+        if (state.audioChunks.length) {
+          const blob = new Blob(state.audioChunks, { type: state.mediaRecorder.mimeType || "audio/webm" });
+          state.audioURL = URL.createObjectURL(blob);
+        }
+        cleanupAudio(); resolve();
+      };
+      state.mediaRecorder.stop();
+    });
+  }
+  cleanupAudio();
+  return Promise.resolve();
+}
+function cleanupAudio() {
+  if (state.micStream) { state.micStream.getTracks().forEach(t => t.stop()); state.micStream = null; }
+  if (state.audioCtx) { state.audioCtx.close().catch(() => {}); state.audioCtx = null; }
+  state.analyser = null;
+}
+
+async function endSpeech() {
+  if (state.phase !== "speak") return;
+  const duration = state.elapsed;
+  state.phase = "ending";
+  await stopEverything();
+  const transcript = (state.finalTranscript + " " + state.interimTranscript).trim();
+  const report = analyze(transcript, duration, state.pauseCount, state.speakSec);
+  saveSession(report);
+  renderResults(report, transcript);
+  showPhase("results");
+  renderHistory();
+}
+
+/* ===================== analysis ===================== */
+function analyze(transcript, durationSec, pauses, targetSec) {
+  const words = transcript ? transcript.trim().split(/\s+/).filter(Boolean) : [];
+  const wordCount = words.length;
+  const minutes = Math.max(durationSec / 60, 1 / 60);
+  const wpm = Math.round(wordCount / minutes);
+
+  const lower = " " + transcript.toLowerCase().replace(/[^a-z' ]/g, " ").replace(/\s+/g, " ") + " ";
+  const fillerCounts = {};
+  let fillerTotal = 0;
+  FILLER_PHRASES.forEach(p => {
+    const re = new RegExp(" " + p.replace(/ /g, " ") + " ", "g");
+    const n = (lower.match(re) || []).length;
+    if (n) { fillerCounts[p] = n; fillerTotal += n; }
+  });
+  FILLER_WORDS.forEach(w => {
+    const re = new RegExp(" " + w + " ", "g");
+    const n = (lower.match(re) || []).length;
+    if (n) { fillerCounts[w] = (fillerCounts[w] || 0) + n; fillerTotal += n; }
+  });
+  const fillerPerMin = +(fillerTotal / minutes).toFixed(1);
+
+  const unique = new Set(words.map(w => w.toLowerCase().replace(/[^a-z']/g, ""))).size;
+  const variety = wordCount ? Math.round((unique / wordCount) * 100) : 0;
+  const confidence = state.confCount ? Math.round((state.confSum / state.confCount) * 100) : null;
+
+  /* Strict scoring — every weakness costs, and the costs stack.
+     100 means a genuinely clean, well-paced, full-length speech. */
+  let score = 100;
+
+  // Fillers: 5 points per filler-per-minute, up to 50. 6/min alone costs 30.
+  score -= Math.min(50, fillerPerMin * 5);
+
+  // Pace: ideal band 120–160 wpm. Outside it, 1 point per 2 wpm of deviation, up to 30.
+  if (wpm > 0) {
+    let dev = 0;
+    if (wpm < 120) dev = 120 - wpm;
+    else if (wpm > 160) dev = wpm - 160;
+    score -= Math.min(30, dev / 2);
+  }
+
+  // Dead air: every long pause costs 5, up to 25. No free pause.
+  score -= Math.min(25, pauses * 5);
+
+  // Duration: proportional penalty for not filling the time. Stopping at half costs 25.
+  const used = Math.min(1, durationSec / targetSec);
+  score -= Math.round((1 - used) * 50);
+
+  // Vocabulary: repetitive word choice under 40% variety costs up to 10.
+  if (wordCount > 30 && variety < 40) score -= Math.min(10, (40 - variety) / 2);
+
+  // Too little content to judge = failed attempt, not a mystery.
+  if (wordCount < 20) score = Math.min(score, 10);
+  if (wordCount === 0) score = 0;
+  score = Math.max(0, Math.round(score));
+
+  return { date: Date.now(), prompt: state.prompt, category: state.category,
+    durationSec: Math.round(durationSec), targetSec, wordCount, wpm,
+    fillerTotal, fillerPerMin, fillerCounts, pauses, variety, confidence, score,
+    samples: state.samples.slice(), pauseTimes: state.pauseTimes.slice() };
+}
+
+function gradeFor(score) {
+  if (score >= 90) return "Excellent";
+  if (score >= 80) return "Good";
+  if (score >= 65) return "Passable";
+  if (score >= 50) return "Weak";
+  if (score >= 30) return "Poor";
+  return "Failed attempt";
+}
+
+function coachNotes(r) {
+  const notes = [];
+  if (r.wordCount === 0) {
+    notes.push("Nothing was captured. Either you didn't speak or the mic failed. Fix the setup and go again — this session tells us nothing.");
+    return notes;
+  }
+  if (r.wordCount < 20) {
+    notes.push(`${r.wordCount} words is not a speech. You stopped almost immediately. The only fix is repetition: draw another prompt and force yourself to keep talking.`);
+    return notes;
+  }
+  // Fillers — bluntly
+  if (r.fillerPerMin >= 8) notes.push(`${r.fillerTotal} fillers at ${r.fillerPerMin}/min. That's roughly one every 8 seconds — your audience stops hearing your argument and starts counting your "ums". This is your single biggest problem.`);
+  else if (r.fillerPerMin >= 4) notes.push(`${r.fillerTotal} fillers (${r.fillerPerMin}/min). Too many. Every filler is a decision you didn't make in time. Pause silently instead — silence costs you nothing, fillers cost credibility.`);
+  else if (r.fillerPerMin >= 1.5) notes.push(`${r.fillerTotal} fillers. Not disqualifying, but a trained speaker would have caught most of them. You know which words are your crutch — listen to the playback.`);
+  else notes.push("Filler control is genuinely clean. This part is done — keep it.");
+  // Pace
+  if (r.wpm > 180) notes.push(`${r.wpm} wpm is rushing. You're outrunning your own thoughts, which is exactly where fillers and rambling come from. Halve your pace at the top of each point.`);
+  else if (r.wpm > 160) notes.push(`${r.wpm} wpm is faster than ideal (120–160). You lose emphasis when everything moves at the same fast speed.`);
+  else if (r.wpm > 0 && r.wpm < 100) notes.push(`${r.wpm} wpm is dragging. Long gaps between ideas read as not knowing what comes next — because usually that's what it is. Tighter structure in prep fixes this.`);
+  else if (r.wpm > 0 && r.wpm < 120) notes.push(`${r.wpm} wpm is on the slow edge. Watch that it's deliberate pacing, not hesitation.`);
+  else notes.push(`${r.wpm} wpm — pace is in the right band.`);
+  // Pauses
+  if (r.pauses >= 4) notes.push(`${r.pauses} dead-air pauses over 1.5s. That's not dramatic timing, that's the structure collapsing mid-speech. Prep a three-beat roadmap and you'll always know what's next.`);
+  else if (r.pauses >= 2) notes.push(`${r.pauses} long pauses. One can be a tool; two or more in a short speech means you ran out of road.`);
+  // Duration
+  const usedPct = Math.round((r.durationSec / r.targetSec) * 100);
+  if (usedPct < 60) notes.push(`You used ${fmtClock(r.durationSec)} of ${fmtClock(r.targetSec)} — ${usedPct}%. Stopping early is the most expensive mistake on the scorecard. An example, a counterpoint, or a "so what" close would have filled it.`);
+  else if (usedPct < 90) notes.push(`${usedPct}% of the allotted time used. Close, but a complete answer fills the container it's given.`);
+  // Variety
+  if (r.wordCount > 30 && r.variety < 35) notes.push(`Word variety at ${r.variety}% — you leaned on the same words repeatedly. Wider vocabulary comes from reading your transcripts and noticing the loops.`);
+  // Transcript reliability
+  if (r.confidence !== null && r.confidence < 70) notes.push(`Recognition confidence was only ${r.confidence}%, so the transcript (and filler counts) may be off. Try the accent setting that matches you, a quieter room, and a closer mic.`);
+  return notes;
+}
+
+/* ===================== timeline chart ===================== */
+function renderTimeline(r) {
+  const svg = $("timelineChart");
+  const S = r.samples || [];
+  if (S.length < 2) {
+    $("timelineSection").style.display = "none";
+    return;
+  }
+  $("timelineSection").style.display = "";
+  const W = 600, H = 180, padL = 34, padR = 10, padT = 12, padB = 24;
+  const plotW = W - padL - padR, plotH = H - padT - padB;
+  const dur = Math.max(r.durationSec, S[S.length - 1].t);
+  const x = t => padL + (t / dur) * plotW;
+
+  // per-interval pace from cumulative word counts
+  const pace = [];
+  for (let i = 0; i < S.length; i++) {
+    const prevW = i === 0 ? 0 : S[i - 1].words;
+    const prevT = i === 0 ? 0 : S[i - 1].t;
+    const dw = S[i].words - prevW, dt = (S[i].t - prevT) / 60;
+    pace.push({ t: S[i].t, wpm: dt > 0 ? dw / dt : 0 });
+  }
+  const maxWpm = Math.max(180, ...pace.map(p => p.wpm)) * 1.1;
+  const yPace = v => padT + plotH - (v / maxWpm) * plotH;
+  const maxE = Math.max(0.05, ...S.map(s => s.energy));
+  const yEnergy = v => padT + plotH - (v / maxE) * plotH * 0.9;
+
+  let el = "";
+  // ideal pace band 120-160
+  el += `<rect x="${padL}" y="${yPace(160)}" width="${plotW}" height="${yPace(120) - yPace(160)}" fill="rgba(12,158,94,0.10)"/>`;
+  // grid lines + labels
+  [60, 120, 180].forEach(v => {
+    if (v < maxWpm) {
+      el += `<line x1="${padL}" y1="${yPace(v)}" x2="${W - padR}" y2="${yPace(v)}" stroke="#eeddc2" stroke-width="1"/>`;
+      el += `<text x="${padL - 6}" y="${yPace(v) + 4}" text-anchor="end" font-size="10" fill="#a99a85" font-family="monospace">${v}</text>`;
+    }
+  });
+  // time axis labels
+  const step = dur > 150 ? 60 : 30;
+  for (let t = 0; t <= dur; t += step) {
+    el += `<text x="${x(t)}" y="${H - 6}" text-anchor="middle" font-size="10" fill="#a99a85" font-family="monospace">${fmtClock(t)}</text>`;
+  }
+  // energy area (behind pace line)
+  let area = `M ${x(0)} ${yEnergy(0)}`;
+  S.forEach(s => { area += ` L ${x(s.t)} ${yEnergy(s.energy)}`; });
+  area += ` L ${x(S[S.length - 1].t)} ${padT + plotH} L ${x(0)} ${padT + plotH} Z`;
+  el += `<path d="${area}" fill="rgba(124,92,255,0.16)" stroke="#7c5cff" stroke-width="1.5"/>`;
+  // pause markers
+  (r.pauseTimes || []).forEach(t => {
+    el += `<line x1="${x(t)}" y1="${padT}" x2="${x(t)}" y2="${padT + plotH}" stroke="#e5484d" stroke-width="2" stroke-dasharray="3 3"/>`;
+  });
+  // pace line
+  let line = "";
+  pace.forEach((p, i) => { line += (i === 0 ? "M" : "L") + ` ${x(p.t)} ${yPace(Math.min(p.wpm, maxWpm))} `; });
+  el += `<path d="${line}" fill="none" stroke="#ff8a00" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+  pace.forEach(p => {
+    el += `<circle cx="${x(p.t)}" cy="${yPace(Math.min(p.wpm, maxWpm))}" r="3.5" fill="#ff8a00"/>`;
+  });
+  svg.innerHTML = el;
+}
+
+/* ===================== improvement plan ===================== */
+function improvementPlan(r) {
+  const areas = [];
+  if (r.wordCount === 0) return areas;
+  if (r.fillerPerMin >= 1.5) {
+    const top = Object.entries(r.fillerCounts).sort((a, b) => b[1] - a[1]).slice(0, 2).map(e => `"${e[0]}"`).join(" and ");
+    areas.push({
+      severity: r.fillerPerMin >= 5 ? 1 : 2, title: "Filler words",
+      why: `${r.fillerTotal} fillers at ${r.fillerPerMin}/min — your go-to crutch: ${top}.`,
+      tip: `Drill: re-answer the same prompt and every time you feel a filler coming, bite it off and stay silent for one full beat. Do this 3 rounds in a row — the reflex fades fast when you practice the pause itself.`
+    });
+  }
+  if (r.wpm > 160 || (r.wpm > 0 && r.wpm < 120)) {
+    const fast = r.wpm > 160;
+    areas.push({
+      severity: r.wpm > 185 || r.wpm < 95 ? 1 : 2, title: fast ? "Pace: too fast" : "Pace: too slow",
+      why: `${r.wpm} wpm against a 120–160 target${fast ? " — listeners can't process at that rate" : " — momentum stalls between ideas"}.`,
+      tip: fast
+        ? `Drill: mark the first sentence of each point and deliberately deliver it at half speed. Fast middles are fine; fast openings lose people. The graph above shows exactly where you sped up.`
+        : `Drill: prep a 3-beat skeleton (point → example → so-what) before speaking. Slowness is almost always searching, not style — a skeleton removes the search.`
+    });
+  }
+  if (r.pauses >= 2) {
+    areas.push({
+      severity: r.pauses >= 4 ? 1 : 2, title: "Dead air",
+      why: `${r.pauses} pauses over 1.5s — the red dashes on the graph show when your structure ran out.`,
+      tip: `Drill: when you feel a stall coming, bridge with a signpost sentence: "The second thing worth saying is…". Signposts buy planning time while sounding deliberate.`
+    });
+  }
+  const usedPct = Math.round((r.durationSec / r.targetSec) * 100);
+  if (usedPct < 90) {
+    areas.push({
+      severity: usedPct < 60 ? 1 : 2, title: "Filling the time",
+      why: `You used ${usedPct}% of the allotted time.`,
+      tip: `Drill: PREP structure — Point, Reason, Example, Point restated. If you finish early, add a counterpoint and knock it down. That alone adds 30–45 seconds of substance.`
+    });
+  }
+  if (r.wordCount > 30 && r.variety < 40) {
+    areas.push({
+      severity: 3, title: "Word variety",
+      why: `${r.variety}% unique words — you looped on the same vocabulary.`,
+      tip: `Drill: read your transcript below and circle every repeated word. Next session, ban your top 2 repeats outright.`
+    });
+  }
+  if (!areas.length) {
+    areas.push({
+      severity: 3, title: "Raise the bar",
+      why: "Nothing flagged this session — delivery mechanics are clean.",
+      tip: `Next level: work on structure and rhetoric. Open with a hook instead of a restatement, use the rule of three, and land a closer that echoes your opening.`
+    });
+  }
+  areas.sort((a, b) => a.severity - b.severity);
+  return areas;
+}
+
+function renderImprovements(r) {
+  const areas = improvementPlan(r);
+  $("improveSection").style.display = areas.length ? "" : "none";
+  const priLabel = { 1: "Fix first", 2: "Work on", 3: "Polish" };
+  $("improveGrid").innerHTML = areas.map(a =>
+    `<div class="improve-card p${a.severity}">
+      <div class="ic-head"><span class="ic-title">${esc(a.title)}</span><span class="ic-pri">${priLabel[a.severity]}</span></div>
+      <div class="ic-why">${esc(a.why)}</div>
+      <div class="ic-tip"><b>Tip:</b> ${esc(a.tip)}</div>
+    </div>`).join("");
+}
+
+/* ===================== AI coach (optional, user's own key) ===================== */
+const AI_KEY_STORE = "offthecuff.apikey";
+let lastReport = null, lastTranscript = "";
+
+async function runAiCoach() {
+  const keyInput = $("aiKey");
+  const key = keyInput.value.trim() || (function(){ try { return localStorage.getItem(AI_KEY_STORE) || ""; } catch(e){ return ""; } })();
+  const out = $("aiOutput");
+  if (!key) { out.style.display = "block"; out.textContent = "Paste an API key first (console.anthropic.com → API keys)."; return; }
+  if (!lastTranscript || lastTranscript.split(/\s+/).length < 15) {
+    out.style.display = "block"; out.textContent = "Not enough transcript for AI coaching this session."; return;
+  }
+  try { localStorage.setItem(AI_KEY_STORE, key); } catch (e) {}
+  const btn = $("btnAiCoach");
+  btn.disabled = true; btn.textContent = "Coaching…";
+  out.style.display = "block"; out.textContent = "Thinking…";
+  const r = lastReport;
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-api-key": key,
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true"
+      },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-5",
+        max_tokens: 700,
+        messages: [{
+          role: "user",
+          content: `You are a blunt, no-sugar-coating public speaking coach. A student just gave an impromptu speech.\n\nPrompt: "${r.prompt}"\nDuration: ${r.durationSec}s of ${r.targetSec}s allowed. Words: ${r.wordCount}. Pace: ${r.wpm} wpm. Fillers: ${r.fillerTotal} (${r.fillerPerMin}/min). Long pauses: ${r.pauses}.\n\nTranscript (may contain speech-recognition errors — judge content and structure, not spelling):\n"""${lastTranscript}"""\n\nGive direct coaching in plain text (no markdown formatting): 1) One sentence on the biggest weakness. 2) Assess the structure — did it have an opening, real points, and a close? 3) Quote one weak moment from the transcript and rewrite it stronger. 4) One concrete drill for next session. Be honest and specific; do not pad with praise.`
+        }]
+      })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      out.textContent = "API error: " + (data.error && data.error.message ? data.error.message : res.status);
+    } else {
+      out.textContent = data.content.map(c => c.text || "").join("\n");
+      $("aiSetup").style.display = "none";
+      out.insertAdjacentHTML("beforeend", `<div class="ai-redo"><button class="btn-ghost" onclick="document.getElementById('aiSetup').style.display='';this.parentElement.remove();">Ask again</button></div>`);
+    }
+  } catch (err) {
+    out.textContent = "Request failed — check your connection and key. (" + err.message + ")";
+  }
+  btn.disabled = false; btn.textContent = "Get AI coaching";
+}
+
+
+function metricClass(kind, r) {
+  if (kind === "wpm") return r.wpm >= 120 && r.wpm <= 160 ? "good" : (r.wpm === 0 ? "" : (r.wpm < 100 || r.wpm > 180 ? "bad" : "warn"));
+  if (kind === "filler") return r.fillerPerMin < 1.5 ? "good" : r.fillerPerMin < 4 ? "warn" : "bad";
+  if (kind === "pauses") return r.pauses === 0 ? "good" : r.pauses <= 1 ? "warn" : "bad";
+  return "";
+}
+
+function renderResults(r, transcript) {
+  lastReport = r;
+  lastTranscript = transcript;
+  renderTimeline(r);
+  renderImprovements(r);
+  $("aiOutput").style.display = "none";
+  $("aiOutput").textContent = "";
+  $("aiSetup").style.display = "";
+  try { const k = localStorage.getItem(AI_KEY_STORE); if (k) $("aiKey").value = k; } catch (e) {}
+  $("scoreNum").textContent = r.score;
+  $("scoreNum").style.color = r.score >= 80 ? "var(--green)" : r.score >= 60 ? "var(--amber)" : "var(--red)";
+  $("scoreGrade").textContent = gradeFor(r.score);
+  $("scoreSub").textContent = `"${r.prompt}" — ${fmtClock(r.durationSec)} spoken, ${r.wordCount} words.`;
+
+  const metrics = [
+    { val: r.wpm || "—", lbl: "words / minute", note: "target 120–160", cls: metricClass("wpm", r) },
+    { val: r.fillerTotal, lbl: "filler words", note: r.fillerPerMin + " per minute", cls: metricClass("filler", r) },
+    { val: r.pauses, lbl: "long pauses", note: "over 1.5 seconds", cls: metricClass("pauses", r) },
+    { val: r.variety + "%", lbl: "word variety", note: "unique ÷ total words", cls: r.variety >= 45 ? "good" : r.variety >= 35 ? "" : "bad" }
+  ];
+  if (r.confidence !== null && r.confidence !== undefined) {
+    metrics.push({ val: r.confidence + "%", lbl: "recognition confidence", note: "how sure the transcriber was", cls: r.confidence >= 80 ? "good" : r.confidence >= 65 ? "warn" : "bad" });
+  }
+  $("metricsGrid").innerHTML = metrics.map(m =>
+    `<div class="metric ${m.cls}"><div class="val">${m.val}</div><div class="lbl">${m.lbl}</div><div class="note">${m.note}</div></div>`
+  ).join("");
+
+  const tags = Object.entries(r.fillerCounts).sort((a, b) => b[1] - a[1]);
+  $("fillerSection").style.display = tags.length ? "" : "none";
+  $("fillerTags").innerHTML = tags.map(([w, n]) =>
+    `<span class="filler-tag">${esc(w)} <b>×${n}</b></span>`).join("");
+
+  $("coachList").innerHTML = coachNotes(r).map(n => `<li>${esc(n)}</li>`).join("");
+
+  if (transcript) {
+    $("transcriptSection").style.display = "";
+    $("transcriptBox").innerHTML = highlightFillers(transcript);
+  } else {
+    $("transcriptSection").style.display = "none";
+  }
+
+  if (state.audioURL) {
+    $("playbackSection").style.display = "";
+    $("playback").src = state.audioURL;
+  } else {
+    $("playbackSection").style.display = "none";
+  }
+}
+
+function esc(s) {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+function highlightFillers(text) {
+  const all = FILLER_PHRASES.concat(FILLER_WORDS).sort((a, b) => b.length - a.length);
+  const re = new RegExp("\\b(" + all.join("|") + ")\\b", "gi");
+  return esc(text).replace(re, m => "<mark>" + m + "</mark>");
+}
+
+/* ===================== history ===================== */
+const STORE_KEY = "offthecuff.sessions.v1";
+let memStore = [];
+function loadSessions() {
+  try { return JSON.parse(localStorage.getItem(STORE_KEY)) || []; }
+  catch (e) { return memStore; }
+}
+function saveSession(r) {
+  const list = loadSessions();
+  list.push(r);
+  const trimmed = list.slice(-50);
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(trimmed)); }
+  catch (e) { memStore = trimmed; }
+}
+function streakDays(list) {
+  const days = new Set(list.map(s => new Date(s.date).toDateString()));
+  let streak = 0;
+  const d = new Date();
+  while (days.has(d.toDateString())) { streak++; d.setDate(d.getDate() - 1); }
+  return streak;
+}
+function renderHistory() {
+  const list = loadSessions();
+  const streak = streakDays(list);
+  $("streakChip").innerHTML = list.length
+    ? `<b>${streak}</b> day streak · ${list.length} session${list.length > 1 ? "s" : ""}` : "";
+
+  if (!list.length) {
+    $("historyStats").textContent = "";
+    $("chart").innerHTML = "";
+    $("historyList").innerHTML = `<p class="empty-note">No sessions yet. Your scores and speeches will show up here.</p>`;
+    return;
+  }
+  const avg = Math.round(list.reduce((a, s) => a + s.score, 0) / list.length);
+  const best = Math.max(...list.map(s => s.score));
+  $("historyStats").textContent = `avg ${avg} · best ${best}`;
+
+  const last10 = list.slice(-10);
+  $("chart").innerHTML = last10.map((s, i) =>
+    `<i style="height:${Math.max(5, s.score)}%" class="${i === last10.length - 1 ? "latest" : ""}" title="${s.score}"></i>`
+  ).join("");
+
+  $("historyList").innerHTML = list.slice().reverse().slice(0, 8).map(s => {
+    const d = new Date(s.date);
+    const col = s.score >= 80 ? "var(--green)" : s.score >= 60 ? "var(--amber)" : "var(--red)";
+    return `<div class="history-item">
+      <span class="hi-score" style="color:${col}">${s.score}</span>
+      <span class="hi-prompt">${esc(s.prompt)}</span>
+      <span class="hi-meta">${d.toLocaleDateString(undefined, { month: "short", day: "numeric" })} · ${fmtClock(s.durationSec)} · ${s.wpm} wpm</span>
+    </div>`;
+  }).join("");
+}
+
+/* ===================== wiring ===================== */
+$("btnDraw").onclick = startPrep;
+$("btnStartNow").onclick = startSpeaking;
+$("btnReroll").onclick = startPrep;
+$("btnCancelPrep").onclick = () => { clearInterval(state.prepTimer); showPhase("setup"); };
+$("btnEnd").onclick = endSpeech;
+$("btnAgain").onclick = startPrep;
+$("btnHome").onclick = () => showPhase("setup");
+$("btnAiCoach").onclick = runAiCoach;
+
+(function init() {
+  renderSetup();
+  renderHistory();
+  const notes = [];
+  if (IS_IOS) {
+    notes.push("iPhone mode: live transcription uses Apple's on-device recognizer. After prep ends, tap the button to start the mic (iOS requires a tap). Audio playback is off here so recording doesn't fight the transcriber for the mic.");
+    if (!hasRecognition) notes.push("Transcription needs iOS 14.5+ Safari. Also check Settings → Siri & Search → Siri Dictation is on.");
+  } else {
+    if (!hasRecognition) notes.push("Live transcription needs Chrome or Edge — timing, recording and playback still work here.");
+    if (!hasMedia) notes.push("Microphone access isn't available in this browser, so sessions will be timer-only.");
+  }
+  if (!notes.length) notes.push("Uses your microphone for recording and live transcription. Everything stays on this device — nothing is uploaded.");
+  $("supportNote").textContent = notes.join(" ");
+})();
+</script>
+</body>
+</html>
